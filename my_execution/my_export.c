@@ -6,11 +6,51 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 21:53:41 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/17 18:49:58 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/17 22:36:58 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+// static	void	loop_copying_s2(const char *s2, char **ptr, int count)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (s2[i])
+// 	{
+// 		(*ptr)[count] = s2[i];
+// 		i++;
+// 		count++;
+// 	}
+// 	(*ptr)[count] = '\0';
+// }
+
+// static char	*ft_strjoin(const char *s1, const char *s2)
+// {
+// 	char	*ptr;
+// 	size_t	i;
+// 	size_t	count;
+
+// 	if (s1 == NULL && s2 == NULL)
+// 		return (NULL);
+// 	if (!s1)
+// 		return (ft_strdup(s2));
+// 	if (!s2)
+// 		return (ft_strdup(s1));
+// 	ptr = (char *)malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
+// 	if (ptr == NULL)
+// 		return (NULL);
+// 	i = 0;
+// 	while (s1[i])
+// 	{
+// 		ptr[i] = s1[i];
+// 		i++;
+// 	}
+// 	count = i;
+// 	loop_copying_s2(s2, &ptr, count);
+// 	return (ptr);
+// }
 
 static int ft_is_a_numb(char c)
 {
@@ -316,6 +356,31 @@ static void replace_node(t_environ *new, t_environ **environ)
     }
 }
 
+static void handling_new_changes(t_environ **new, t_environ **environ)
+{
+    char *new_value;
+    char *new_operator;
+    
+    if(!((*new)->value))
+        return;
+    if(!ft_strcmp((*new)->operator, "="))
+        replace_node(*new, environ);
+    else if(!ft_strcmp((*new)->operator, "+="))
+    {
+        printf("kayna\n");
+        if(!strcmp((*new)->value,""))
+            return;
+        new_value = ft_strjoin((*environ)->value, (*new)->value, GLOBAL);
+        new_operator = ft_strdup("=");
+        if(!new_value)
+            return;
+        (*new)->value = new_value;
+        (*new)->operator = new_operator;
+        replace_node(new, environ);
+    }
+        
+}
+
 static t_environ *make_export_struct(char **splited_arg)
 {
     t_environ *environ;
@@ -332,8 +397,7 @@ static t_environ *make_export_struct(char **splited_arg)
             new = ft_lstnew_environ(splited_arg[i]);
             if(is_the_var_in_environ(new->var, environ))
             {
-                printf("we r here\n");
-                replace_node(new, &environ);
+                handling_new_changes(&new, &environ);
             }
             else
                 ft_lstadd_back_environ(&environ, new);
@@ -423,9 +487,9 @@ int export_parssing(t_com *command, char *oldpromt)
                 {
                     printf("%s", environ->var);
                     if(environ->operator)
-                        printf("%s", environ->operator);
+                         printf("%s", environ->operator);
                     if(environ->value)
-                        printf("\"%s\"", environ->value);
+                        printf("\"%s\"",environ->value );
                     printf("\n");
                     environ = environ->next;
                 }
