@@ -6,7 +6,7 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 21:53:41 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/17 12:55:33 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/17 18:49:58 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,23 +248,22 @@ t_environ  *ft_lstnew_environ(char *str)
 	newnode = (t_environ *)malloc(sizeof(t_environ));
 	if (!newnode)
 		return (NULL);
-    if(!strcmp(str, ""))
-    {
-        newnode->var =NULL;
-        newnode->operator= NULL;
-        newnode->value= NULL;
-        newnode->next = NULL;
-    }
-    else
-    {
-        splited_export = split_environ(str);
-        if(!splited_export)
-            return(NULL);
-	    newnode->var =splited_export[0];
-        newnode->operator= splited_export[1];
-        newnode->value= splited_export[2];
-	    newnode->next = NULL;
-    }
+    // if(!strcmp(str, ""))
+    // {
+    //     newnode->var =NULL;
+    //     newnode->operator= NULL;
+    //     newnode->value= NULL;
+    //     newnode->next = NULL;
+    // }
+    // else
+    // {
+    splited_export = split_environ(str);
+    if(!splited_export)
+        return(NULL);
+	newnode->var =splited_export[0];
+    newnode->operator= splited_export[1];
+    newnode->value= splited_export[2];
+	newnode->next = NULL;
     return(newnode);
 }
 void	ft_lstadd_back_environ(t_environ **lst, t_environ *new)
@@ -286,102 +285,150 @@ void	ft_lstadd_back_environ(t_environ **lst, t_environ *new)
 	(temp)->next = new;
 }
 
+static int is_the_var_in_environ(char *variable, t_environ *environ)
+{
+   while(environ)
+   {
+       if(!strcmp(environ->var ,variable))
+           return(1);
+       environ = environ->next;
+   }
+   return(0);
+}
+
+static void replace_node(t_environ *new, t_environ **environ)
+{
+    t_environ *tmp;
+    t_environ *current;
+    
+    tmp = (*environ);
+    while(tmp->next)
+    {
+        if(!strcmp((tmp->next)->var, new->var))
+        {
+            current = tmp;
+            if((tmp->next)->next)
+                tmp = (tmp->next)->next;
+            new->next = tmp;
+            current->next = new;
+        }
+        tmp=tmp->next;     
+    }
+}
 
 static t_environ *make_export_struct(char **splited_arg)
 {
-    t_environ *s_export;
+    t_environ *environ;
     t_environ *new;
     int count ;
     int i;
     
-    s_export = NULL;
-    count = 0;
+    environ = making_the_environ_struct();
+   (1&& (count = 0), (i = 0 ));
     if(splited_arg)
     {
-        if(!strcmp(splited_arg[0],""))
-        {
-            // printf("s\n",splited_arg[0]);
-            new = ft_lstnew_environ((splited_arg[0]));
-            ft_lstadd_back_environ(&s_export, new);
-            return(s_export);
-        }
-        i = 0;
         while(splited_arg[i])
         {
-            // printf("****%s****\n", splited_arg[i]);
             new = ft_lstnew_environ(splited_arg[i]);
-            ft_lstadd_back_environ(&s_export, new);
+            if(is_the_var_in_environ(new->var, environ))
+            {
+                printf("we r here\n");
+                replace_node(new, &environ);
+            }
+            else
+                ft_lstadd_back_environ(&environ, new);
             i++;
         }
-        return(s_export);
+        return(environ);
     }
     else 
         return(NULL);
 }
+static t_environ *input_struct_handling(char *oldpromt)
+{
+    char **splited_arg;
+    int var_name_end_;
+    int i;
+    
+    if(!ft_strcmp(oldpromt, ""))
+        return(NULL);
+    else
+    {
+        splited_arg = cstm_split(oldpromt, " ");
+        if(!splited_arg)
+            return(NULL);
+        i = 0;
+        while(splited_arg[i])
+        {
+            var_name_end_=(var_name_end(splited_arg[i]));
+            if(!valid_var_name(splited_arg[i], var_name_end_))
+            {
+                printf("syntax error!");
+                    return(NULL);
+            }
+            i++;
+        }
+            return(make_export_struct(splited_arg));
+    }
+}
+// static change_the_var_value(t_environ *s_export, t_environ **environ)
+// {
+//     t_environ *tmp;
+//     t_environ *new;
 
+//     tmp=(*environ);
 
+//     while(tmp)
+//     {
+//         if(!strcmp(s_export->var, tmp->var))
+//         {
+//             new = ft_lstnew_environ();
+//         }
+            
+//     }
+// }
+
+// static void new_environ(t_environ *s_export, t_environ **environ)
+// {
+    
+//     if(!s_export || !environ)
+//         return;
+//     while(s_export)
+//     {
+//         if(is_the_var_in_environ(s_export->var, *environ))
+//             if(s_export->value)
+//                 change_the_var_value(s_export, &environ);
+//         s_export=s_export->next;    
+//     }
+    
+// } 
+    
 int export_parssing(t_com *command, char *oldpromt)
 {
     int i;
-
-    int var_name_end_;
-    t_environ *s_export;
-    t_environ **environ;
-    t_environ *environ_;
-    t_environ *tmp;
-    char **splited_arg;
-
-    // environ_ = making_the_environ_struct();
-    // environ = &environ_;
+    t_environ *environ;
     
-    
-    i = 1;
+        
     if(command->command)
     {
         start_of_arguments(command,&oldpromt);
-        // if(ft_strlen(oldpromt) <= 1)
-        //
-            //  return (1);
         if(valid_position_export(oldpromt))
         {
-            if(!ft_strcmp(oldpromt, ""))
-                s_export =make_export_struct(&oldpromt);
-            else
+            environ = input_struct_handling(oldpromt);
+            if(environ == NULL)
+                printf("oooo\n");
+            else 
             {
-                splited_arg = cstm_split(oldpromt, " ");
-            
-                if(!splited_arg)
+                while(environ)
                 {
-                    return(-1);
+                    printf("%s", environ->var);
+                    if(environ->operator)
+                        printf("%s", environ->operator);
+                    if(environ->value)
+                        printf("\"%s\"", environ->value);
+                    printf("\n");
+                    environ = environ->next;
                 }
-                 i = 0;
-                while(splited_arg[i])
-                {
-                    var_name_end_=(var_name_end(splited_arg[i]));
-                    if(!valid_var_name(splited_arg[i], var_name_end_))
-                    {
-                        printf("syntax error!");
-                        return(-1);
-                    }
-                    i++;
-                }
-                s_export =make_export_struct(splited_arg);
-                // while(tmp)
-                // {
-                //     ft_lstnew_environ()
-                // }
-                
-            }
-            // while(s_export)
-            // {
-                
-            // }
-            while(s_export)
-            {
-                printf("*****%s****\n", s_export->var);
-                printf("%s\n", s_export->operator);
-                printf("%s\n", s_export->value);
-                s_export = s_export->next;
             }
         }
         else 
@@ -394,7 +441,3 @@ int export_parssing(t_com *command, char *oldpromt)
         return(-1);
 }
 
-// void export_execution(t_com *command ,t_environ *s_environ)
-// {
-//     if(comand)
-// }
