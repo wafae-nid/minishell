@@ -6,12 +6,13 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:40:40 by agaladi           #+#    #+#             */
-/*   Updated: 2025/05/16 21:48:42 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/17 18:55:33 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
 
 # include <stdio.h>
 # include <unistd.h>
