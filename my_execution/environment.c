@@ -6,31 +6,31 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 11:21:33 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/14 11:55:14 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/16 21:45:13 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 
-static void	ft_lstadd_back_environ(t_environ **lst, t_environ *new)
-{
-	t_environ	*temp;
+// static void	ft_lstadd_back_environ(t_environ **lst, t_environ *new)
+// {
+// 	t_environ	*temp;
 
-	if (new == NULL)
-		return ;
-	if (!*lst)
-	{
-		*lst = new;
-		return ;
-	}
-	temp = *lst;
-	while ((temp)->next != NULL)
-	{
-		(temp) = (temp)->next;
-	}
-	(temp)->next = new;
-}
+// 	if (new == NULL)
+// 		return ;
+// 	if (!*lst)
+// 	{
+// 		*lst = new;
+// 		return ;
+// 	}
+// 	temp = *lst;
+// 	while ((temp)->next != NULL)
+// 	{
+// 		(temp) = (temp)->next;
+// 	}
+// 	(temp)->next = new;
+// }
 
 
 t_environ *making_the_environ_struct(void)

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_export.c                                        :+:      :+:    :+:   */
+/*   ft_environ.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: agaladi <agaladi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,7 +12,7 @@
 
 #include "../../minishell.h"
 
-int	ft_export_command(t_env **my_export_env, const char *key, const char *value)
+int	ft_environ_command(t_env **my_export_env, const char *key, const char *value)
 {
 	t_env	*current;
 	t_env	*new_node;

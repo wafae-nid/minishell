@@ -6,7 +6,7 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:40:40 by agaladi           #+#    #+#             */
-/*   Updated: 2025/05/14 11:55:46 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/16 21:48:42 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,8 +166,8 @@ t_env		*convert_env_to_list(char **envp);
 t_env		*init_env(char **envp);
 int			ft_pwd(t_shell *data);
 int			ft_exit(char **args, int exit_status);
-int			ft_export(char **args, t_shell *data);
-int			ft_export_command(t_env **my_env,
+int			ft_environ(char **args, t_shell *data);
+int			ft_environ_command(t_env **my_env,
 				const char *key, const char *value);
 int			ft_execute_builtin(t_shell *data);
 int			ft_execute_command(t_shell *data);
@@ -306,30 +306,32 @@ int			ft_isalpha(char c);
 
 /* ************************************************** UR CODE ************************************************************ */
 
-typedef struct s_environ
-{
-	char *var;
-	char *value;
-	struct s_environ *next;
+// typedef struct s_environ
+// {
+// 	char *var;
+// 	char *value;
+// 	struct s_environ *next;
 	
-} t_environ;
+// } t_environ;
 
-typedef struct s_export
+typedef struct s_environ
 {
 	char *var;
 	char *operator;
 	char *value;
-	struct s_export *next;
-} t_export;
+	struct s_environ *next;
+} t_environ;
 
 void execution_entery(t_com *command, char *PWD, char *oldprompt);
 void  pwd_execution(t_com *command);
 void echo_execution(t_com *command);
 t_environ *making_the_environ_struct(void);
-int count_lengh_value_str(char *str);
-int count_lengh_var_str(char *str);
-char  **split_environ(char *str);
+// int count_lengh_value_str(char *str);
+// int count_lengh_var_str(char *str);
+//char  **split_environ(char *str);
 t_environ  *ft_lstnew_environ( char *environ);
+void	ft_lstadd_back_environ(t_environ **lst, t_environ *new);
+
 void executing_env(void);
 void cd_execution(t_com *command, char *PWD);
 char	*ft_strjoin_(const char *s1, const char *s2);

@@ -6,7 +6,7 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 21:53:41 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/16 17:09:29 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/17 12:55:33 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ static int count_lengh_var_str_export(char *str)
     }
     return (i);  
 }
-static void fill_in_export(char *str,char ***splited_export_char)
+ static void fill_in_environ(char *str,char ***splited_export_char)
 {
     int i;
     int j;
@@ -175,6 +175,7 @@ static void fill_in_export(char *str,char ***splited_export_char)
     i = 0;
     while(str[i] && str[i] != '=' && str[i] != '+')
     {
+        
         (*splited_export_char)[0][i] = str[i];
         i++;
     }
@@ -192,7 +193,8 @@ static void fill_in_export(char *str,char ***splited_export_char)
         i++;
         j++;
     }
-    (*splited_export_char)[1][j]='\0';
+    if((*splited_export_char)[1])
+        (*splited_export_char)[1][j]='\0';
     j = 0;
     while(str[i])
     {
@@ -200,11 +202,12 @@ static void fill_in_export(char *str,char ***splited_export_char)
         j++;
         i++;
     }
-    (*splited_export_char)[2][j] = '\0';
+    if((*splited_export_char)[2])
+        (*splited_export_char)[2][j] = '\0';
 }
 
 
-static char  **split_export(char *str)
+static char  **split_environ(char *str)
 {
     char **splited_export_char;
     int  lengh_of_var_str;
@@ -218,38 +221,43 @@ static char  **split_export(char *str)
     splited_export_char = (char **)malloc(4*sizeof(char *));
     if(!splited_export_char)
         return(NULL);
-    splited_export_char[0] =(char *)malloc((size_t)(count_lengh_var_str + 1));
+    splited_export_char[0] =(char *)malloc((size_t)(lengh_of_var_str + 1));
     if(str[lengh_of_var_str] == '=')
         splited_export_char[1] = (char *)malloc((size_t)(2));
     else if(str[lengh_of_var_str] == '+')
         splited_export_char[1] = (char *)malloc((size_t)(3));
     else
-        splited_export_char[1] = (char *)malloc((size_t)(1));
-    splited_export_char[2]= (char *)malloc((size_t)(lengh_of_var_value + 1));
+    {
+        splited_export_char[1] = NULL;
+        splited_export_char[2] = NULL;
+        fill_in_environ(str,&splited_export_char);
+        return(splited_export_char);
+    }
+    splited_export_char[2]= (char *)malloc((size_t)(lengh_of_var_value + 10));
     splited_export_char[3] = NULL ;
     if(!splited_export_char[0] || !splited_export_char[1] || !splited_export_char[2])
         return(NULL);
-    fill_in_export(str,&splited_export_char);
+    fill_in_environ(str,&splited_export_char);
      return(splited_export_char);
 }
-static t_export  *ft_lstnew_export( char *str)
+t_environ  *ft_lstnew_environ(char *str)
 {
-	t_export	*newnode;
+	t_environ	*newnode;
     char       **splited_export;
 
-	newnode = (t_export *)malloc(sizeof(t_export));
+	newnode = (t_environ *)malloc(sizeof(t_environ));
 	if (!newnode)
 		return (NULL);
     if(!strcmp(str, ""))
     {
-        newnode->var =ft_strdup("");
-        newnode->operator= ft_strdup("");;
-        newnode->value= ft_strdup("");
+        newnode->var =NULL;
+        newnode->operator= NULL;
+        newnode->value= NULL;
         newnode->next = NULL;
     }
     else
     {
-        splited_export = split_export(str);
+        splited_export = split_environ(str);
         if(!splited_export)
             return(NULL);
 	    newnode->var =splited_export[0];
@@ -259,9 +267,9 @@ static t_export  *ft_lstnew_export( char *str)
     }
     return(newnode);
 }
-static void	ft_lstadd_back_export(t_export **lst, t_export *new)
+void	ft_lstadd_back_environ(t_environ **lst, t_environ *new)
 {
-	t_export	*temp;
+	t_environ	*temp;
 
 	if (new == NULL)
 		return ;
@@ -279,10 +287,10 @@ static void	ft_lstadd_back_export(t_export **lst, t_export *new)
 }
 
 
-static t_export *make_export_struct(char **splited_arg)
+static t_environ *make_export_struct(char **splited_arg)
 {
-    t_export *s_export;
-    t_export *new;
+    t_environ *s_export;
+    t_environ *new;
     int count ;
     int i;
     
@@ -292,16 +300,17 @@ static t_export *make_export_struct(char **splited_arg)
     {
         if(!strcmp(splited_arg[0],""))
         {
-            new = ft_lstnew_export((splited_arg[0]));
-            ft_lstadd_back_export(&s_export, new);
+            // printf("s\n",splited_arg[0]);
+            new = ft_lstnew_environ((splited_arg[0]));
+            ft_lstadd_back_environ(&s_export, new);
             return(s_export);
         }
         i = 0;
         while(splited_arg[i])
         {
-            // printf("%s\n", splited_arg[i]);
-            new = ft_lstnew_export(splited_arg[i]);
-            ft_lstadd_back_export(&s_export, new);
+            // printf("****%s****\n", splited_arg[i]);
+            new = ft_lstnew_environ(splited_arg[i]);
+            ft_lstadd_back_environ(&s_export, new);
             i++;
         }
         return(s_export);
@@ -316,11 +325,17 @@ int export_parssing(t_com *command, char *oldpromt)
     int i;
 
     int var_name_end_;
-    t_export *s_export;
-    
-
-    i = 1;
+    t_environ *s_export;
+    t_environ **environ;
+    t_environ *environ_;
+    t_environ *tmp;
     char **splited_arg;
+
+    // environ_ = making_the_environ_struct();
+    // environ = &environ_;
+    
+    
+    i = 1;
     if(command->command)
     {
         start_of_arguments(command,&oldpromt);
@@ -351,12 +366,21 @@ int export_parssing(t_com *command, char *oldpromt)
                     i++;
                 }
                 s_export =make_export_struct(splited_arg);
+                // while(tmp)
+                // {
+                //     ft_lstnew_environ()
+                // }
+                
             }
+            // while(s_export)
+            // {
+                
+            // }
             while(s_export)
             {
                 printf("*****%s****\n", s_export->var);
-                printf("#####%s####\n", s_export->operator);
-                printf("??????%s?????\n", s_export->value);
+                printf("%s\n", s_export->operator);
+                printf("%s\n", s_export->value);
                 s_export = s_export->next;
             }
         }
