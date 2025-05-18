@@ -6,7 +6,7 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 21:53:41 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/18 18:54:32 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/18 22:02:01 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,11 +317,11 @@ static void replace_node(t_environ **new, t_environ **environ)
     tmp = (*environ);
     while(tmp)
     {
-        if(!strcmp((tmp->next)->var, (*new)->var))
+        if((tmp->next) && !strcmp((tmp->next)->var, (*new)->var))
         {
             current = tmp;
-            if((tmp->next)->next)
-                tmp = (tmp->next)->next;
+            // if((tmp->next)->next);
+            tmp = (tmp->next)->next;
             if(!strcmp((*new)->operator, "+="))
             {
                 new_value = ft_strjoin((current->next)->value, (*new)->value, GLOBAL);
@@ -331,6 +331,7 @@ static void replace_node(t_environ **new, t_environ **environ)
             }
             (*new)->next = tmp;
             current->next = *new;
+            break;
         }
         tmp=tmp->next;     
     }
