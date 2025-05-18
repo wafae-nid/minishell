@@ -6,7 +6,7 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 21:53:41 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/17 22:36:58 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/18 15:21:39 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -327,30 +327,40 @@ void	ft_lstadd_back_environ(t_environ **lst, t_environ *new)
 
 static int is_the_var_in_environ(char *variable, t_environ *environ)
 {
-   while(environ)
+    t_environ *current = environ;
+   while(current)
    {
-       if(!strcmp(environ->var ,variable))
+       if(!strcmp(current->var ,variable))
            return(1);
-       environ = environ->next;
+       current = current->next;
    }
    return(0);
 }
 
-static void replace_node(t_environ *new, t_environ **environ)
+static void replace_node(t_environ **new, t_environ **environ)
 {
     t_environ *tmp;
     t_environ *current;
     
+    char *new_value;
+    
     tmp = (*environ);
     while(tmp->next)
     {
-        if(!strcmp((tmp->next)->var, new->var))
+        if(!strcmp((tmp->next)->var, (*new)->var))
         {
             current = tmp;
             if((tmp->next)->next)
-                tmp = (tmp->next)->next;
-            new->next = tmp;
-            current->next = new;
+            tmp = (tmp->next)->next;
+            if(!strcmp((*new)->operator, "+="))
+            {   
+                new_value = ft_strjoin((current->next)->value, (*new)->value, GLOBAL);
+                if(!new_value)
+                    return;
+                (*new)->value = new_value;
+            }
+            (*new)->next = tmp;
+            current->next = *new;
         }
         tmp=tmp->next;     
     }
@@ -361,32 +371,21 @@ static void handling_new_changes(t_environ **new, t_environ **environ)
     char *new_value;
     char *new_operator;
     
+
     if(!((*new)->value))
         return;
-    if(!ft_strcmp((*new)->operator, "="))
-        replace_node(*new, environ);
-    else if(!ft_strcmp((*new)->operator, "+="))
-    {
-        printf("kayna\n");
-        if(!strcmp((*new)->value,""))
-            return;
-        new_value = ft_strjoin((*environ)->value, (*new)->value, GLOBAL);
-        new_operator = ft_strdup("=");
-        if(!new_value)
-            return;
-        (*new)->value = new_value;
-        (*new)->operator = new_operator;
-        replace_node(new, environ);
-    }
-        
+    else if(!ft_strcmp((*new)->operator, "+=") && !strcmp((*new)->value,""))
+        return;
+    replace_node(new, environ);     
 }
 
 static t_environ *make_export_struct(char **splited_arg)
 {
-    t_environ *environ;
+    static t_environ *environ;
     t_environ *new;
     int count ;
     int i;
+    
     
     environ = making_the_environ_struct();
    (1&& (count = 0), (i = 0 ));
@@ -400,9 +399,16 @@ static t_environ *make_export_struct(char **splited_arg)
                 handling_new_changes(&new, &environ);
             }
             else
+            {
                 ft_lstadd_back_environ(&environ, new);
+            }
             i++;
         }
+        // while(environ)
+        // {
+        //     printf("%s\n", environ->var);
+        //     environ= environ->next;
+        // }  
         return(environ);
     }
     else 
@@ -487,12 +493,13 @@ int export_parssing(t_com *command, char *oldpromt)
                 {
                     printf("%s", environ->var);
                     if(environ->operator)
-                         printf("%s", environ->operator);
+                         printf("=");
                     if(environ->value)
                         printf("\"%s\"",environ->value );
                     printf("\n");
                     environ = environ->next;
                 }
+                return (1);
             }
         }
         else 

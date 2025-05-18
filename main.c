@@ -44,7 +44,7 @@ int    main(int argc, char *argv[], char **envp)
     char            cmd_line_args;
     struct termios    term;
     t_shell            data;
-
+    
     (void)argv;
     (void)argc;
     init_shell_data_config(&data, envp);
