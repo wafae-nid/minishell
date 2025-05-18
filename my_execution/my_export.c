@@ -6,51 +6,11 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 21:53:41 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/18 15:21:39 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/18 18:54:32 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-// static	void	loop_copying_s2(const char *s2, char **ptr, int count)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (s2[i])
-// 	{
-// 		(*ptr)[count] = s2[i];
-// 		i++;
-// 		count++;
-// 	}
-// 	(*ptr)[count] = '\0';
-// }
-
-// static char	*ft_strjoin(const char *s1, const char *s2)
-// {
-// 	char	*ptr;
-// 	size_t	i;
-// 	size_t	count;
-
-// 	if (s1 == NULL && s2 == NULL)
-// 		return (NULL);
-// 	if (!s1)
-// 		return (ft_strdup(s2));
-// 	if (!s2)
-// 		return (ft_strdup(s1));
-// 	ptr = (char *)malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
-// 	if (ptr == NULL)
-// 		return (NULL);
-// 	i = 0;
-// 	while (s1[i])
-// 	{
-// 		ptr[i] = s1[i];
-// 		i++;
-// 	}
-// 	count = i;
-// 	loop_copying_s2(s2, &ptr, count);
-// 	return (ptr);
-// }
 
 static int ft_is_a_numb(char c)
 {
@@ -84,29 +44,6 @@ static int valid_position_export(char *str)
     return(1);
 }
 
-
-// static int allowed_special_char(char c)
-// {
-//     if(c == '$' || c == '+' || c == '_' || c == '=')
-    
-// }
-
-// static int valid_name_char(char *str)
-// {
-//     int i;
-
-//     i = 0;
-//     if(!str)
-    
-//         return(-1);
-//     while(str[i])
-//     {
-// 		if(!(ft_isalpha(str[i]) == 1 || str[i] == '_' || str[i] == '=' || ft_is_a_numb(str[i]))) 
-//             return(0);
-//         i++;
-//     }
-//         return(0);
-// }
 static int var_name_end(char *str) // to know the end of my variable name;
 {
     int i;
@@ -330,12 +267,45 @@ static int is_the_var_in_environ(char *variable, t_environ *environ)
     t_environ *current = environ;
    while(current)
    {
+       
        if(!strcmp(current->var ,variable))
+       {
            return(1);
+       }
        current = current->next;
    }
    return(0);
 }
+// static void replace_node(t_environ **new, t_environ **environ) {
+//     t_environ *tmp = *environ;
+//     t_environ *prev = NULL; // Keeps track of the previous node
+//     char *new_value;
+
+//     while (tmp) {
+//         if (!strcmp(tmp->var, (*new)->var)) {
+//             // If operator is "+=", concatenate values
+//             if (!strcmp((*new)->operator, "+=")) {
+//                 new_value = ft_strjoin(tmp->value, (*new)->value, GLOBAL);
+//                 if (!new_value)
+//                     return; // Exit if memory allocation fails
+//                 free((*new)->value); // Free old value of *new
+//                 (*new)->value = new_value;
+//             }
+
+//             // Update pointers
+//             (*new)->next = tmp->next; // New node points to the next of the old one
+//             if (prev)
+//                 prev->next = *new; // Previous node points to the new one
+//             else
+//                 *environ = *new; // Update the head of the list if replacing the first node
+
+//             free(tmp); // Free old node
+//             return;    // Exit after replacement
+//         }
+//         prev = tmp;
+//         tmp = tmp->next; // Move to the next node
+//     }
+// }
 
 static void replace_node(t_environ **new, t_environ **environ)
 {
@@ -345,15 +315,15 @@ static void replace_node(t_environ **new, t_environ **environ)
     char *new_value;
     
     tmp = (*environ);
-    while(tmp->next)
+    while(tmp)
     {
         if(!strcmp((tmp->next)->var, (*new)->var))
         {
             current = tmp;
             if((tmp->next)->next)
-            tmp = (tmp->next)->next;
+                tmp = (tmp->next)->next;
             if(!strcmp((*new)->operator, "+="))
-            {   
+            {
                 new_value = ft_strjoin((current->next)->value, (*new)->value, GLOBAL);
                 if(!new_value)
                     return;
@@ -376,57 +346,55 @@ static void handling_new_changes(t_environ **new, t_environ **environ)
         return;
     else if(!ft_strcmp((*new)->operator, "+=") && !strcmp((*new)->value,""))
         return;
-    replace_node(new, environ);     
+    replace_node(new, environ); 
 }
 
-static t_environ *make_export_struct(char **splited_arg)
+static void make_export_struct(char **splited_arg, t_environ **environ)
 {
-    static t_environ *environ;
     t_environ *new;
+    t_environ *current;
     int count ;
     int i;
     
     
-    environ = making_the_environ_struct();
+    
    (1&& (count = 0), (i = 0 ));
     if(splited_arg)
     {
         while(splited_arg[i])
         {
             new = ft_lstnew_environ(splited_arg[i]);
-            if(is_the_var_in_environ(new->var, environ))
+            if(is_the_var_in_environ(new->var, *environ))
             {
-                handling_new_changes(&new, &environ);
+                handling_new_changes(&new, environ);
             }
-            else
+            else 
             {
-                ft_lstadd_back_environ(&environ, new);
-            }
+                ft_lstadd_back_environ(environ, new);
+            }   
             i++;
         }
-        // while(environ)
-        // {
-        //     printf("%s\n", environ->var);
-        //     environ= environ->next;
-        // }  
-        return(environ);
+        current = *environ;
+        while(current)
+        {
+            printf("%s\n", current->var);
+            current= current->next;
+        }  
     }
-    else 
-        return(NULL);
 }
-static t_environ *input_struct_handling(char *oldpromt)
+static void input_struct_handling(char *oldpromt, t_environ **environ)
 {
     char **splited_arg;
     int var_name_end_;
     int i;
     
     if(!ft_strcmp(oldpromt, ""))
-        return(NULL);
+        return;
     else
     {
         splited_arg = cstm_split(oldpromt, " ");
         if(!splited_arg)
-            return(NULL);
+            return;
         i = 0;
         while(splited_arg[i])
         {
@@ -434,70 +402,43 @@ static t_environ *input_struct_handling(char *oldpromt)
             if(!valid_var_name(splited_arg[i], var_name_end_))
             {
                 printf("syntax error!");
-                    return(NULL);
+                    return;
             }
             i++;
         }
-            return(make_export_struct(splited_arg));
-    }
+        make_export_struct(splited_arg, environ);
+    } 
 }
-// static change_the_var_value(t_environ *s_export, t_environ **environ)
-// {
-//     t_environ *tmp;
-//     t_environ *new;
-
-//     tmp=(*environ);
-
-//     while(tmp)
-//     {
-//         if(!strcmp(s_export->var, tmp->var))
-//         {
-//             new = ft_lstnew_environ();
-//         }
-            
-//     }
-// }
-
-// static void new_environ(t_environ *s_export, t_environ **environ)
-// {
-    
-//     if(!s_export || !environ)
-//         return;
-//     while(s_export)
-//     {
-//         if(is_the_var_in_environ(s_export->var, *environ))
-//             if(s_export->value)
-//                 change_the_var_value(s_export, &environ);
-//         s_export=s_export->next;    
-//     }
-    
-// } 
     
 int export_parssing(t_com *command, char *oldpromt)
 {
     int i;
-    t_environ *environ;
-    
+    static t_environ *environ;
+    t_environ *current;
+        
+    if(!environ)
+        environ = making_the_environ_struct();
         
     if(command->command)
     {
         start_of_arguments(command,&oldpromt);
         if(valid_position_export(oldpromt))
         {
-            environ = input_struct_handling(oldpromt);
+            input_struct_handling(oldpromt, &environ);
             if(environ == NULL)
                 printf("oooo\n");
             else 
             {
-                while(environ)
+                current = environ;
+                while(current)
                 {
-                    printf("%s", environ->var);
-                    if(environ->operator)
+                    printf("%s", current->var);
+                    if(current->operator)
                          printf("=");
-                    if(environ->value)
-                        printf("\"%s\"",environ->value );
+                    if(current->value)
+                        printf("\"%s\"",current->value );
                     printf("\n");
-                    environ = environ->next;
+                    current = current->next;
                 }
                 return (1);
             }
@@ -508,7 +449,6 @@ int export_parssing(t_com *command, char *oldpromt)
             return(0); 
         }          
     }
-    else 
-        return(-1);
+    return(-1);
 }
 
