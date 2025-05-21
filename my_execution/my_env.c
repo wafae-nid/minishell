@@ -6,7 +6,7 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 11:21:33 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/16 21:45:13 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/20 18:27:59 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,20 +60,22 @@ t_environ *making_the_environ_struct(void)
     else 
         return(NULL);
 }
-void executing_env(void)
+void executing_env(t_environ **environ)
 {
-    t_environ *s_environ;
-    
-    s_environ = making_the_environ_struct();
-    if (s_environ == NULL)
+    t_environ *current;
+    if (*environ == NULL)
         return;
-    while(s_environ)
+    current = *environ;
+    while(current)
     {
-        printf("%s", s_environ->var);
-        printf("=");
-        printf("%s", s_environ->value);
-        printf("\n");
-        s_environ= s_environ->next;
+        if(current->value)
+        {
+            printf("%s", current->var);
+            printf("=");
+            printf("%s", current->value);
+            printf("\n");
+        }
+        current= current->next;
     }
     
 }

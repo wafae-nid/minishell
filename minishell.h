@@ -6,7 +6,7 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:40:40 by agaladi           #+#    #+#             */
-/*   Updated: 2025/05/17 21:12:27 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:51:15 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -333,9 +333,10 @@ t_environ *making_the_environ_struct(void);
 t_environ  *ft_lstnew_environ( char *environ);
 void	ft_lstadd_back_environ(t_environ **lst, t_environ *new);
 
-void executing_env(void);
+void executing_env(t_environ **environ);
 void cd_execution(t_com *command, char *PWD);
 char	*ft_strjoin_(const char *s1, const char *s2);
-int export_parssing(t_com *command, char *oldprompt);
+int export_parssing(t_com *command, char *oldprompt, t_environ **environ);
+void unset_executing(t_com *command, t_environ **environ);
 
 #endif

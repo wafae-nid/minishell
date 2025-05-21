@@ -6,7 +6,7 @@
 #    By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/10 23:26:11 by agaladi           #+#    #+#              #
-#    Updated: 2025/05/17 21:13:02 by wnid-hsa         ###   ########.fr        #
+#    Updated: 2025/05/20 19:54:16 by wnid-hsa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,7 @@ EXECUTION_SRCS = execution/builtings/ft_echo.c execution/builtings/ft_env.c \
 				 execution/builtings/builtings_utils/env_utils.c \
 				 execution/builtings/builtings_utils/export_utils.c \
 				 printf/ft_print_chr.c printf/ft_print_hex.c printf/ft_print_nbr.c printf/ft_print_percentage.c printf/ft_print_ptr.c printf/ft_print_str.c printf/ft_print_un_nbr.c printf/ft_printf.c printf/ft_ptr_len.c printf/ft_putchar.c printf/ft_putnbr.c printf/ft_putnbr_base.c printf/ft_putstr.c printf/ft_space.c\
-				 my_execution/execution_entery.c my_execution/my_pwd.c my_execution/my_echo.c my_execution/environment.c my_execution/environment_utils.c my_execution/my_cd.c my_execution/my_export.c \
+				 my_execution/execution_entery.c my_execution/my_pwd.c my_execution/my_echo.c my_execution/my_env.c my_execution/environment_utils.c my_execution/my_cd.c my_execution/my_export.c my_execution/my_unset.c\
 				 
 PARSING_SRCS = parsing/errors/error_handler.c  parsing/formater/add_spaces.c \
 parsing/expand/expand_utils.c parsing/expand/expand_loop.c parsing/expand/expand_loop_utils.c parsing/expand/expand.c parsing/formater/formater.c parsing/formater/quotes_handler.c \

@@ -6,7 +6,7 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 21:53:41 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/18 22:02:01 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:31:29 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -375,12 +375,12 @@ static void make_export_struct(char **splited_arg, t_environ **environ)
             }   
             i++;
         }
-        current = *environ;
-        while(current)
-        {
-            printf("%s\n", current->var);
-            current= current->next;
-        }  
+        // current = *environ;
+        // while(current)
+        // {
+        //     printf("%s\n", current->var);
+        //     current= current->next;
+        // }  
     }
 }
 static void input_struct_handling(char *oldpromt, t_environ **environ)
@@ -411,26 +411,23 @@ static void input_struct_handling(char *oldpromt, t_environ **environ)
     } 
 }
     
-int export_parssing(t_com *command, char *oldpromt)
+int export_parssing(t_com *command, char *oldpromt, t_environ **environ)
 {
     int i;
-    static t_environ *environ;
+    
     t_environ *current;
-        
-    if(!environ)
-        environ = making_the_environ_struct();
         
     if(command->command)
     {
         start_of_arguments(command,&oldpromt);
         if(valid_position_export(oldpromt))
         {
-            input_struct_handling(oldpromt, &environ);
+            input_struct_handling(oldpromt, environ);
             if(environ == NULL)
                 printf("oooo\n");
             else 
             {
-                current = environ;
+                current = *environ;
                 while(current)
                 {
                     printf("%s", current->var);
