@@ -6,34 +6,26 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 06:04:08 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/11 20:45:32 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/21 20:25:14 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-// char *extract_the_cd_path(char *readline)
-// {
-//         char **splited;
-
-
-//         splited = ft_split(readline, ' ');
-//         if(!splited)
-//                 return(NULL);
-//         else
-//         {
-//                 if(count_words(readline, ' ') == 2)
-//                         return (splited[1]);
-//                 else
-//                         return(NULL);
-//         }
-// }
+static int is_valid_pwd(t_com *command)
+{
+    if (!ft_strcmp(command->command[1],"-p") ||
+                                         !ft_strcmp(command->command[1],"--p" ) || ft_strcmp(command->command[1],"---p"))
+        return(0);
+    else
+        return(1);
+}
 
 void  pwd_execution(t_com   *command)
 {
     char *PWD;
 
-    if ((command->command)[1])
+    if (command->command[1] && !is_valid_pwd(command))
     {
         printf("error msg");
         return;
