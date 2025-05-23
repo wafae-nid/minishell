@@ -6,7 +6,7 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 06:04:08 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/21 20:25:14 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/21 21:16:56 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 
 static int is_valid_pwd(t_com *command)
 {
-    if (!ft_strcmp(command->command[1],"-p") ||
-                                         !ft_strcmp(command->command[1],"--p" ) || ft_strcmp(command->command[1],"---p"))
+    if (!ft_strcmp(command->command[1],"-p") || !ft_strcmp(command->command[1],"--p" ) || !ft_strcmp(command->command[1],"---p"))
         return(0);
     else
         return(1);

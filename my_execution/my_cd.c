@@ -6,7 +6,7 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 17:20:00 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/11 20:40:15 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/24 00:04:11 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -353,6 +353,7 @@ static char *extract_the_cd_path(char *readline)
     //}
     //return 0;
 //}
+// static char *cd_telda()
 static void  cd_oldpwd(char *PWD)
 {
     char *OLDPWD;
@@ -379,22 +380,62 @@ static void cd_home(char *PWD)
 		else
 		printf("error!");
 }
+static char *get_deleted_path_gain(char *PWD, char *new)
+{
+	char *deleted_path;
+
+	deleted_path = ft_strjoin(PWD, new, GLOBAL);
+	if(!deleted_path)
+		return(NULL);
+	else
+		return(deleted_path);
+}
 static void new_path_cd(char *new,char *PWD)
 {
     char *new_path;
-    
-    if(!chdir(new))
+	int flag;
+	
+	flag == 0;
+	new_path = getcwd(NULL,0);
+	if(!new_path)
 	{
-		new_path=getcwd(NULL,0);
+		flag =1;
+		printf("getcwd cant reach directory \n");
+		new_path = get_deleted_path_gain(PWD, new); //add / to new before joining and if it is /at end dont add it 
+		printf("++++%s+++\n",new_path);
+	}
+	if(!chdir(new))
+	{
+		if(flag == 0)
+			new_path = getcwd(NULL,0);
 		setenv("OLDPWD", PWD,1);
 		setenv("PWD", new_path,1);
 	}
-		else 
-			printf("error!");
+	else
+	{
+		printf("chdir error");
+		return;
+	}
 }
 
+static char *telda_full_path(char **telda_path)
+{
+	char *telda_full_path;
+	
+	if(!telda_path ||!(*telda_path))
+		return(NULL);
+	if((*telda_path)[0] == '~')
+		(*telda_path)++;
+	telda_full_path = ft_strjoin("/home/wnid-hsa", (*telda_path), GLOBAL);
+	if(!telda_full_path)
+		return(NULL);
+	else
+		return(telda_full_path);
+}
+		
 void cd_execution(t_com *command, char *PWD)
 {
+	char *telda_path;
 	
     if((command->command)[2])
     {
@@ -408,9 +449,15 @@ void cd_execution(t_com *command, char *PWD)
     }
 	else if((command->command)[1] && !strcmp((command->command)[1],"-"))
         cd_oldpwd(PWD);
-	else if(((command->command)[1] && !strcmp((command->command)[1], "~")) || (command->command)[1]== NULL)
-        cd_home(PWD);
+	else if (((command->command)[1] && !strcmp((command->command)[1], "~")) || (command->command)[1]== NULL)
+    	cd_home(PWD);
+	else if (command->command[1][0] == '~' )
+	{
+		telda_path = telda_full_path(&(command->command[1]));
+		if(!telda_path)
+			return;
+		new_path_cd(telda_path,PWD);
+	}
 	else
         new_path_cd((command->command)[1],PWD);
-
 }
