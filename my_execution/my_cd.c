@@ -6,7 +6,7 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 17:20:00 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/24 00:04:11 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/24 17:11:15 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -384,7 +384,11 @@ static char *get_deleted_path_gain(char *PWD, char *new)
 {
 	char *deleted_path;
 
-	deleted_path = ft_strjoin(PWD, new, GLOBAL);
+	char *pwd_for_path;
+	pwd_for_path = ft_strjoin(PWD, "/", GLOBAL);
+	if(!pwd_for_path)
+		return (NULL);
+	deleted_path = ft_strjoin(pwd_for_path, new, GLOBAL);
 	if(!deleted_path)
 		return(NULL);
 	else
@@ -393,21 +397,16 @@ static char *get_deleted_path_gain(char *PWD, char *new)
 static void new_path_cd(char *new,char *PWD)
 {
     char *new_path;
-	int flag;
+	char *save_first_gtwcd;
 	
-	flag == 0;
-	new_path = getcwd(NULL,0);
-	if(!new_path)
-	{
-		flag =1;
-		printf("getcwd cant reach directory \n");
-		new_path = get_deleted_path_gain(PWD, new); //add / to new before joining and if it is /at end dont add it 
-		printf("++++%s+++\n",new_path);
-	}
 	if(!chdir(new))
 	{
-		if(flag == 0)
-			new_path = getcwd(NULL,0);
+		new_path = getcwd(NULL,0);
+		if(!new_path)
+		{
+			printf("getcwd cant reach directory \n");
+			new_path = get_deleted_path_gain(PWD, new);
+		}
 		setenv("OLDPWD", PWD,1);
 		setenv("PWD", new_path,1);
 	}
