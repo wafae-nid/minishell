@@ -6,7 +6,7 @@
 /*   By: wnid-hsa <wnid-hsa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 21:53:41 by wnid-hsa          #+#    #+#             */
-/*   Updated: 2025/05/23 12:39:40 by wnid-hsa         ###   ########.fr       */
+/*   Updated: 2025/05/25 00:55:46 by wnid-hsa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static int valid_position_export(char *str)
     return(1);
 }
 
-static int var_name_end(char *str) // to know the end of my variable name;
+static int var_name_end(char *str)
 {
     int i;
     
@@ -67,26 +67,46 @@ static int var_name_end(char *str) // to know the end of my variable name;
         }
         i++;
     }
-    return(0);
+    return(i);
 }
+static int non_valid_identifier(char c)
+{
+    if(c == '*' || c == '%' || c == '#' 
+         || c == '-' || c == '(' || c == ')' 
+         || c == '!' || c == '{' || c == '}' 
+         || c == '[' || c == ']' || c == '?' || c == '&'
+         || c == '~' || c == '.' || c == '@' || c == ';' || c == ':')
+    {
+        return(1);
+    }
+    else
+        return(0);
+}
+
 static int valid_var_name(char *str, int count)
 {
     int i;
-    i = 0;
     
     if(!str)
+    {
         return(-1);
+    }
+    if(ft_is_a_numb(str[0]))
+        return(0);
+    i = 0;
     while(i < count)
     {
-        if(!(ft_isalpha(str[i]) == 1 || str[i] == '_' || str[i] == '=' || ft_is_a_numb(str[i]))) 
+        if((!ft_is_a_numb(str[i]) && !ft_isalpha(str[i])) && str[i] != '_')
+        {
             return(0);
-        if((ft_is_a_numb(str[i])) && i == 0)
-            return(0);
+        }
+        
         i++;
     }
     return(1);
     
 }
+
 static void start_of_arguments(t_com *command,char **oldpromt)
 {
     int i;
@@ -400,6 +420,7 @@ static void input_struct_handling(char *oldpromt, t_environ **environ)
         while(splited_arg[i])
         {
             var_name_end_=(var_name_end(splited_arg[i]));
+            
             if(!valid_var_name(splited_arg[i], var_name_end_))
             {
                 printf("syntax error!");
@@ -427,17 +448,17 @@ int export_parssing(t_com *command, char *oldpromt, t_environ **environ)
                 printf("oooo\n");
             else 
             {
-                current = *environ;
-                while(current)
-                {
-                    printf("%s", current->var);
-                    if(current->operator)
-                         printf("=");
-                    if(current->value)
-                        printf("\"%s\"",current->value );
-                    printf("\n");
-                    current = current->next;
-                }
+                // current = *environ;
+                // while(current)
+                // {
+                //     printf("%s", current->var);
+                //     if(current->operator)
+                //          printf("=");
+                //     if(current->value)
+                //         printf("\"%s\"",current->value );
+                //     printf("\n");
+                //     current = current->next;
+                // }
                 return (1);
             }
         }
